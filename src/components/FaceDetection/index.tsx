@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Box, Alert, Button } from "@mui/material";
 
 import useCamera from "../../hooks/useCamera";
@@ -7,9 +7,13 @@ import useFaceDetection from "../../hooks/useFaceDetection";
 
 import { VIDEO_SIZES, CANVAS_SIZES } from "../../constants/common";
 
+import { controlsState } from "./controlsState";
+
 import { styles } from "./styles";
 
 const FaceDetection = () => {
+  const [controls, setControls] = useState(controlsState);
+
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -41,6 +45,10 @@ const FaceDetection = () => {
       }, 1000);
     }
   }, [isModelsPrepared, videoStream, detectAllFaces]);
+
+  const handleControlClick = (itemId: number) => {
+    setControls(controls.map((control) => ({ ...control, enabled: control.id === itemId })));
+  };
 
   // useEffect(() => {
   //   const faceMyDetect = () => {
@@ -106,9 +114,16 @@ const FaceDetection = () => {
 
         <Box sx={styles.videoContainer}>
           <Box sx={styles.controls}>
-            <Button variant="contained">Detect face</Button>
-            <Button variant="outlined">Face landmarks</Button>
-            <Button variant="outlined">Face expressions</Button>
+            {controls.map(({ id, title, enabled }) => (
+              <Button
+                key={id}
+                variant={enabled ? "contained" : "outlined"}
+                onClick={() => handleControlClick(id)}
+                sx={styles.button}
+              >
+                {title}
+              </Button>
+            ))}
           </Box>
           <Box sx={{ position: "relative" }}>
             <video ref={videoRef} id="camera" autoPlay muted playsInline></video>

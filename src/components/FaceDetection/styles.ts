@@ -24,4 +24,8 @@ export const styles = {
     justifyContent: "space-between",
     columnGap: "10px",
   },
+  button: {
+    width: "200px",
+    fontSize: "1rem",
+  },
 };
