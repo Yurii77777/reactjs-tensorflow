@@ -61,7 +61,9 @@ const useFaceDetection = (options: FaceDetectionParams) => {
       width,
       height,
     });
+
     faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+    faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
   }, [canvasRef, videoStream, height, width]);
 
   const handleFaceExpressions = useCallback(async () => {
@@ -91,7 +93,9 @@ const useFaceDetection = (options: FaceDetectionParams) => {
       width,
       height,
     });
+
     faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+    faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
   }, [canvasRef, videoStream, height, width]);
 
   return { detectAllFaces, handleFaceLandmarks, handleFaceExpressions };
