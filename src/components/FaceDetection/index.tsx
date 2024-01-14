@@ -68,16 +68,28 @@ const FaceDetection = () => {
     <Box sx={styles.wrapper}>
       <Box sx={styles.contentContainer}>
         <Box>
-          {errorCameraEnable && <Alert severity="error">{errorCameraEnable}</Alert>}
+          {errorCameraEnable && (
+            <Alert severity="error" sx={styles.alert}>
+              {errorCameraEnable}
+            </Alert>
+          )}
           {isErrorOnModelsLoading && (
-            <Alert severity="error">
+            <Alert severity="error" sx={styles.alert}>
               Помилка завантаження моделей! Спробуйте перезавантажити сторінку! Model loading error! Try reloading the
               page!
             </Alert>
           )}
 
           {videoStream && !isErrorOnModelsLoading && !isModelsPrepared && (
-            <Alert severity="info">Виконується підготовка програми! Program preparation is underway!</Alert>
+            <Alert severity="info" sx={styles.alert}>
+              Виконується підготовка програми! Program preparation is underway!
+            </Alert>
+          )}
+
+          {isModelsPrepared && (
+            <Alert severity="info" sx={styles.alert}>
+              Здається, я тебе бачу 😅 I think I see you 😅
+            </Alert>
           )}
         </Box>
 

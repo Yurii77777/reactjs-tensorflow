@@ -28,4 +28,7 @@ export const styles = {
     width: "200px",
     fontSize: "1rem",
   },
+  alert: {
+    fontSize: "1.5rem",
+  },
 };
