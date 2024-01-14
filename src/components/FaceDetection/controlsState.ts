@@ -1,20 +1,20 @@
 export const controlsState = [
   {
     id: 0,
-    // name: "isFaceDetection",
     title: "Detect face",
+    handler: "detectAllFaces",
     enabled: true,
   },
   {
     id: 1,
-    // name: "isFaceLandmarks",
     title: "Face landmarks",
+    handler: "handleFaceLandmarks",
     enabled: false,
   },
   {
     id: 2,
-    // name: "isFaceExpressions",
     title: "Face expressions",
+    handler: "handleFaceExpressions",
     enabled: false,
   },
 ];

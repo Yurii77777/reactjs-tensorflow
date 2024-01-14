@@ -31,7 +31,7 @@ const FaceDetection = () => {
 
   // Активуємо детекцію обличчя
   // Activate face detection
-  const { detectAllFaces } = useFaceDetection({
+  const { detectAllFaces, handleFaceLandmarks, handleFaceExpressions } = useFaceDetection({
     videoStream,
     canvasRef,
     width: CANVAS_SIZES.WIDTH,
@@ -39,61 +39,30 @@ const FaceDetection = () => {
   });
 
   useEffect(() => {
-    if (isModelsPrepared && videoStream) {
-      setInterval(async () => {
-        detectAllFaces();
-      }, 1000);
+    const activeControl = controls.find((control) => control.enabled);
+    if (!activeControl) return;
+
+    const handlerName = activeControl.handler;
+    let interval: any;
+
+    switch (handlerName) {
+      case "detectAllFaces":
+        interval = setInterval(detectAllFaces, 1000);
+        break;
+      case "handleFaceLandmarks":
+        interval = setInterval(handleFaceLandmarks, 1000);
+        break;
+      case "handleFaceExpressions":
+        interval = setInterval(handleFaceExpressions, 1000);
+        break;
     }
-  }, [isModelsPrepared, videoStream, detectAllFaces]);
+
+    return () => clearInterval(interval);
+  }, [controls, detectAllFaces, handleFaceLandmarks, handleFaceExpressions]);
 
   const handleControlClick = (itemId: number) => {
     setControls(controls.map((control) => ({ ...control, enabled: control.id === itemId })));
   };
-
-  // useEffect(() => {
-  //   const faceMyDetect = () => {
-  //     setInterval(async () => {
-  //       if (!videoStream) {
-  //         return;
-  //       }
-
-  //       const detections = await faceapi.detectAllFaces(videoStream, new faceapi.TinyFaceDetectorOptions());
-  //       // .withFaceLandmarks()
-  //       // .withFaceExpressions();
-  //       console.log("detections", detections);
-
-  //       if (!canvasRef.current) {
-  //         return;
-  //       }
-
-  //       let canvas = canvasRef.current;
-  //       const ctx = canvas.getContext("2d");
-
-  //       if (ctx) {
-  //         ctx.clearRect(0, 0, canvas.width, canvas.height);
-  //       }
-
-  //       canvas = faceapi.createCanvasFromMedia(videoStream);
-  //       faceapi.matchDimensions(canvasRef.current, {
-  //         width: videoStream.width,
-  //         height: videoStream.height,
-  //       });
-
-  //       const resized = faceapi.resizeResults(detections, {
-  //         width: videoStream.width,
-  //         height: videoStream.height,
-  //       });
-
-  //       faceapi.draw.drawDetections(canvasRef.current, resized);
-  //       // faceapi.draw.drawFaceLandmarks(canvasRef.current, resized);
-  //       // faceapi.draw.drawFaceExpressions(canvasRef.current, resized);
-  //     }, 1000);
-  //   };
-
-  //   if (isModelsPrepared) {
-  //     faceMyDetect();
-  //   }
-  // }, [isModelsPrepared, videoStream]);
 
   return (
     <Box sx={styles.wrapper}>
