@@ -4,6 +4,7 @@ import { Box, Alert, Button } from "@mui/material";
 import useCamera from "../../hooks/useCamera";
 import useLoadModels from "../../hooks/useLoadModels";
 import useFaceDetection from "../../hooks/useFaceDetection";
+import useFormatExpression from "../../hooks/useFormatExpression";
 
 import { VIDEO_SIZES, CANVAS_SIZES } from "../../constants/common";
 
@@ -31,12 +32,16 @@ const FaceDetection = () => {
 
   // Активуємо детекцію обличчя
   // Activate face detection
-  const { detectAllFaces, handleFaceLandmarks, handleFaceExpressions } = useFaceDetection({
+  const { detectAllFaces, handleFaceLandmarks, handleFaceExpressions, expressions } = useFaceDetection({
     videoStream,
     canvasRef,
     width: CANVAS_SIZES.WIDTH,
     height: CANVAS_SIZES.HEIGHT,
   });
+
+  // Обробляємо вираз обличча, якщо обрана така опція
+  // Process facial expressions if this option is selected
+  const { expressionMessage } = useFormatExpression(expressions);
 
   useEffect(() => {
     const activeControl = controls.find((control) => control.enabled);
@@ -86,9 +91,15 @@ const FaceDetection = () => {
             </Alert>
           )}
 
-          {isModelsPrepared && (
+          {isModelsPrepared && !expressionMessage && (
             <Alert severity="info" sx={styles.alert}>
               Здається, я тебе бачу 😅 I think I see you 😅
+            </Alert>
+          )}
+
+          {expressionMessage && (
+            <Alert severity="info" sx={styles.alert}>
+              {expressionMessage}
             </Alert>
           )}
         </Box>

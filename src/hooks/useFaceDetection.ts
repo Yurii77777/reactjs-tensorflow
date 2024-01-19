@@ -1,10 +1,12 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import * as faceapi from "face-api.js";
+import { FaceExpressions } from "face-api.js";
 
 import { FaceDetectionParams } from "../models/faceDetectionParams";
 
 const useFaceDetection = (options: FaceDetectionParams) => {
   const { videoStream, canvasRef, width, height } = options;
+  const [expressions, setExpressions] = useState<FaceExpressions | null>(null);
 
   const detectAllFaces = useCallback(async () => {
     const isEnoughData = videoStream && canvasRef && canvasRef.current;
@@ -77,6 +79,12 @@ const useFaceDetection = (options: FaceDetectionParams) => {
       .detectAllFaces(videoStream, new faceapi.TinyFaceDetectorOptions())
       .withFaceExpressions();
 
+    const isExpressions = detections && !!detections.length;
+
+    if (isExpressions) {
+      setExpressions(detections[0].expressions);
+    }
+
     const ctx = canvasRef.current.getContext("2d");
 
     if (!ctx) {
@@ -98,7 +106,7 @@ const useFaceDetection = (options: FaceDetectionParams) => {
     faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
   }, [canvasRef, videoStream, height, width]);
 
-  return { detectAllFaces, handleFaceLandmarks, handleFaceExpressions };
+  return { detectAllFaces, handleFaceLandmarks, handleFaceExpressions, expressions };
 };
 
 export default useFaceDetection;
