@@ -77,6 +77,10 @@ const useFaceDetection = (options: FaceDetectionParams) => {
       return;
     }
 
+    if (genderAndAge) {
+      setGenderAndAge(null);
+    }
+
     const detections = await faceapi
       .detectAllFaces(videoStream, new faceapi.TinyFaceDetectorOptions())
       .withFaceExpressions();
@@ -106,13 +110,17 @@ const useFaceDetection = (options: FaceDetectionParams) => {
 
     faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
     faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
-  }, [canvasRef, videoStream, height, width]);
+  }, [canvasRef, videoStream, height, width, genderAndAge]);
 
   const handleAgeAndGender = useCallback(async () => {
     const isEnoughData = videoStream && canvasRef && canvasRef.current;
 
     if (!isEnoughData) {
       return;
+    }
+
+    if (expressions) {
+      setExpressions(null);
     }
 
     const detections = await faceapi
@@ -145,7 +153,7 @@ const useFaceDetection = (options: FaceDetectionParams) => {
     });
 
     faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
-  }, [canvasRef, videoStream, height, width]);
+  }, [canvasRef, videoStream, height, width, expressions]);
 
   return { detectAllFaces, handleFaceLandmarks, handleFaceExpressions, handleAgeAndGender, expressions, genderAndAge };
 };

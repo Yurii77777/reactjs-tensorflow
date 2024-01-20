@@ -30,19 +30,19 @@ const MessageComponent: React.FC<IProps> = ({
         Виконується підготовка програми! Program preparation is underway!
       </Alert>
     );
-  } else if (!expressionMessage && !ageAndGenderMessage) {
+  } else if (!expressionMessage && !ageAndGenderMessage && isModelsPrepared) {
     return (
       <Alert severity="info" sx={styles.alert}>
         Здається, я тебе бачу 😅 I think I see you 😅
       </Alert>
     );
-  } else if (expressionMessage && !ageAndGenderMessage) {
+  } else if (expressionMessage) {
     return (
       <Alert severity="info" sx={styles.alert}>
         {expressionMessage}
       </Alert>
     );
-  } else if (ageAndGenderMessage && !expressionMessage) {
+  } else if (ageAndGenderMessage) {
     return (
       <Alert severity="info" sx={styles.alert}>
         {ageAndGenderMessage}

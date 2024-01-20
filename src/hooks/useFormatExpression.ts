@@ -72,6 +72,10 @@ const useFormatExpression = (expressions: any) => {
     if (expressions) {
       handleFaceExpression(expressions);
     }
+
+    return () => {
+      setExpressionMessage(null);
+    };
   }, [expressions]);
 
   return { expressionMessage };
