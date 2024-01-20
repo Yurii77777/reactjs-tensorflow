@@ -25,10 +25,11 @@ export const styles = {
     columnGap: "10px",
   },
   button: {
-    width: "200px",
-    fontSize: "1rem",
+    width: "250px",
+    fontSize: "1.3rem",
   },
   alert: {
     fontSize: "1.5rem",
+    width: "100%",
   },
 };

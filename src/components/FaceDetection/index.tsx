@@ -1,22 +1,22 @@
 import { useRef, useEffect, useState } from "react";
-import { Box, Alert, Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
+
+import MessageComponent from "../MessageComponent/index";
 
 import useCamera from "../../hooks/useCamera";
 import useLoadModels from "../../hooks/useLoadModels";
 import useFaceDetection from "../../hooks/useFaceDetection";
 import useFormatExpression from "../../hooks/useFormatExpression";
+import useAgeAndGenderDetection from "../../hooks/useAgeAndGenderDetection";
 
-import { VIDEO_SIZES, CANVAS_SIZES, GENDER } from "../../constants/common";
+import { VIDEO_SIZES, CANVAS_SIZES } from "../../constants/common";
 
 import { controlsState } from "./controlsState";
-
-import { AgeAndGenderState } from "../../models/ageAndGenderState";
 
 import { styles } from "./styles";
 
 const FaceDetection = () => {
   const [controls, setControls] = useState(controlsState);
-  const [ageAndGenderMessage, setAgeAndGenderMessage] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -47,6 +47,10 @@ const FaceDetection = () => {
   // Process facial expressions if this option is selected
   const { expressionMessage } = useFormatExpression(expressions);
 
+  // Оприділяємо вік та стать, якщо обрана така опція
+  // Detect age and gender if this option is selected
+  const { ageAndGenderMessage } = useAgeAndGenderDetection(genderAndAge);
+
   useEffect(() => {
     const activeControl = controls.find((control) => control.enabled);
     if (!activeControl) return;
@@ -72,49 +76,6 @@ const FaceDetection = () => {
     return () => clearInterval(interval);
   }, [controls, detectAllFaces, handleFaceLandmarks, handleFaceExpressions, handleAgeAndGender]);
 
-  useEffect(() => {
-    const handleAgeAndGenderMessage = () => {
-      const { gender, age } = genderAndAge as AgeAndGenderState;
-
-      let genderMessage = "";
-
-      switch (gender) {
-        case GENDER.male.eng:
-          genderMessage = `Схоже тут у нас ${GENDER.male.ua}. `;
-          break;
-        case GENDER.female.eng:
-          genderMessage = `Схоже тут у нас ${GENDER.female.ua}. `;
-          break;
-        default:
-          console.log(`Who is this ${gender}?`);
-      }
-
-      if (age < 10) {
-        genderMessage += `О, сцикопіхота на місці! Тобі ${age} рочків.`;
-      } else if (age < 20) {
-        genderMessage += `Ще трішки і будуть півчик продавати. Тобі ${age} рочків.`;
-      } else if (age < 30) {
-        genderMessage += `Входиш у доросле життя. Тобі ${age} рочків.`;
-      } else if (age < 40) {
-        genderMessage += `Вже пора ставати розсудливим. Тобі ${age} рочків.`;
-      } else if (age < 50) {
-        genderMessage += `Як там, 45-ть баба ягідка опять. Тобі ${age} рочків.`;
-      } else if (age < 60) {
-        genderMessage += `Ще є порох у порохівницях. Тобі ${age} рочків.`;
-      } else if (age < 70) {
-        genderMessage += `В принципі, вже можна і місце спочивання підбирати. Тобі ${age} рочків.`;
-      } else if (age > 70.01) {
-        genderMessage += `Це вже клініка. Тобі ${age} рочків.`;
-      }
-
-      setAgeAndGenderMessage(genderMessage || "");
-    };
-
-    if (genderAndAge) {
-      handleAgeAndGenderMessage();
-    }
-  }, [genderAndAge]);
-
   const handleControlClick = (itemId: number) => {
     setControls(controls.map((control) => ({ ...control, enabled: control.id === itemId })));
   };
@@ -122,42 +83,15 @@ const FaceDetection = () => {
   return (
     <Box sx={styles.wrapper}>
       <Box sx={styles.contentContainer}>
-        <Box>
-          {errorCameraEnable && (
-            <Alert severity="error" sx={styles.alert}>
-              {errorCameraEnable}
-            </Alert>
-          )}
-          {isErrorOnModelsLoading && (
-            <Alert severity="error" sx={styles.alert}>
-              Помилка завантаження моделей! Спробуйте перезавантажити сторінку! Model loading error! Try reloading the
-              page!
-            </Alert>
-          )}
-
-          {videoStream && !isErrorOnModelsLoading && !isModelsPrepared && (
-            <Alert severity="info" sx={styles.alert}>
-              Виконується підготовка програми! Program preparation is underway!
-            </Alert>
-          )}
-
-          {isModelsPrepared && !expressionMessage && !ageAndGenderMessage && (
-            <Alert severity="info" sx={styles.alert}>
-              Здається, я тебе бачу 😅 I think I see you 😅
-            </Alert>
-          )}
-
-          {expressionMessage && (
-            <Alert severity="info" sx={styles.alert}>
-              {expressionMessage}
-            </Alert>
-          )}
-
-          {ageAndGenderMessage && (
-            <Alert severity="info" sx={styles.alert}>
-              {ageAndGenderMessage}
-            </Alert>
-          )}
+        <Box sx={{ width: "100%" }}>
+          <MessageComponent
+            errorCameraEnable={errorCameraEnable}
+            isErrorOnModelsLoading={isErrorOnModelsLoading}
+            isModelsPrepared={isModelsPrepared}
+            videoStream={videoStream}
+            expressionMessage={expressionMessage}
+            ageAndGenderMessage={ageAndGenderMessage}
+          />
         </Box>
 
         <Box sx={styles.videoContainer}>
