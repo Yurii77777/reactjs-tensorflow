@@ -17,4 +17,10 @@ export const controlsState = [
     handler: "handleFaceExpressions",
     enabled: false,
   },
+  {
+    id: 3,
+    title: "Age and Gender",
+    handler: "handleAgeAndGender",
+    enabled: false,
+  },
 ];

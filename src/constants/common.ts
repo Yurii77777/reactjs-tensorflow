@@ -38,3 +38,14 @@ export const EXPRESSIONS = {
     ua: "здивований",
   },
 };
+
+export const GENDER = {
+  male: {
+    eng: "male",
+    ua: "мужчинчик",
+  },
+  female: {
+    eng: "female",
+    ua: "дівчинка",
+  },
+};
